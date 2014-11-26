@@ -37,11 +37,6 @@ Favg = Fpredetermined;
 
 %normalise pictures
 while (j < 8)
-    
-    %temporary variable used to calculate average of Fip at the end of
-    %cycle
-    FAvgTmp = 0;
-    
     for i =  1:length(FileName)
         tmpFile = FileName{i};
         tmpFile = fullfile('features_data',tmpFile);
@@ -55,15 +50,13 @@ while (j < 8)
         %Fip - transformation of image Fi
         Fip = Fi * Ab;
         
-        if (i == 1 && j == 0)
-            Favg = Fip;
-        end
         
-        FAvgTmp = FAvgTmp + Fip;
-    end
-    
-    if (j > 0) 
-        (FAvgTmp / length(FileName)) - Favg
+        
+        if (i == 1)
+            FAvgTmp = Fip;
+        else
+            FAvgTmp = FAvgTmp + Fip;
+        end
     end
     
     Favg = FAvgTmp / length(FileName);
