@@ -13,20 +13,12 @@ Fpredetermined = [13 20;
     16 50;
     48 50;];
 
+
+%get all image names
 for x = 1:length(files)
     file = files(x).name;
     if length(findstr('txt', file)) > 0
         FileName{i} = char(files(x).name);
-        
-        %         fileName = fullfile('features_data',FileName(i));
-        %         data = importdata(fileName);
-        %
-        %         if i == 1
-        %             Favg = [data(1); data(6); data(2); data(7); data(3); data(8); data(4); data(9); data(5); data(10)];
-        %         else
-        %             Fi = [data(1); data(6); data(2); data(7); data(3); data(8); data(4); data(9); data(5); data(10)];
-        %             Favg = (Favg + Fi) / 2;
-        %         end
         i = i + 1;
     end
 end
@@ -34,9 +26,10 @@ end
 j = 0;
 
 Favg = Fpredetermined;
+doIteration = true;
 
 %normalise pictures
-while (j < 8)
+while (doIteration == true)
     
     %temporary variable used to calculate average of Fip at the end of
     %cycle
@@ -44,8 +37,8 @@ while (j < 8)
     
     for i =  1:length(FileName)
         tmpFile = FileName{i};
-        tmpFile = fullfile('features_data',tmpFile);
-        data = importdata(tmpFile);
+        tmpTxtFile = fullfile('features_data',tmpFile);
+        data = importdata(tmpTxtFile);
         
         Fi = [data(1) data(6) 1; data(2) data(7) 1; data(3) data(8) 1; data(4) data(9) 1; data(5) data(10) 1];
         
@@ -55,6 +48,9 @@ while (j < 8)
         %Fip - transformation of image Fi
         Fip = Fi * Ab;
         
+        imgFile = strrep(tmpFile, '.txt', '.jpg'); 
+        ImageResize(imgFile, Ab);
+        
         if (i == 1 && j == 0)
             Favg = Fip;
         end
@@ -62,12 +58,16 @@ while (j < 8)
         FAvgTmp = FAvgTmp + Fip;
     end
     
-    if (j > 0) 
-        (FAvgTmp / length(FileName)) - Favg
+    %find difference between current and previous average, if its small
+    %stop
+    diff = abs((FAvgTmp / length(FileName)) - Favg);
+    maxDiff = max(diff(:));
+    
+    if maxDiff < 0.8
+        doIteration = false;
     end
     
     Favg = FAvgTmp / length(FileName);
-    
     j = j+1;
 end
 

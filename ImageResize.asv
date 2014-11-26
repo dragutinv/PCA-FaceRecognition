@@ -1,0 +1,23 @@
+function [  ] = ImageResize( imageName, Ab)
+
+imageName = fullfile('faces_data',imageName);
+image = imread(imageName);
+image = rgb2gray(image);
+
+out_image = zeros(64, 64);
+
+for x = 1:64
+    for y = 1:64
+        out_pixel = [x y 1] * Ab;
+        
+        if (out_pixel(1) > )
+        
+        out_image(x, y) = image(out_pixel(1), out_pixel(2));
+    end
+end
+
+imageDestinationName = fullfile('tmp_faces',imageName);
+imwrite(imageDestinationName, out_image);
+
+end
+
