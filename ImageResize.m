@@ -1,25 +1,35 @@
 function [  ] = ImageResize( imageName, Ab)
 
 imageSrcName = fullfile('faces_data',imageName);
+
+ %check if jpg file exist, if not use png file
+if exist(imageSrcName, 'file') == 0
+    imageSrcName = strrep(imageSrcName, '.jpg', '.png'); 
+end
+
 image = imread(imageSrcName);
 image = rgb2gray(image);
 
 out_image = zeros(64, 64);
 
-A = [Ab(1, :); Ab(2, :)];
-b = Ab(3, :)';
+A = Ab([1, 3; 2 4]);
+b = Ab([5; 6]);
 
 for x = 1:64
     for y = 1:64
-        out_pixel = int32(pinv(A) * ( [x ; y] - b));
+        out_pixel = int32(A \ ([x ; y] - b));
         
-        if (out_pixel(1) <= 0) out_pixel(1) = 1;
+        if (out_pixel(1) <= 0) 
+            out_pixel(1) = 1;
         end
-        if (out_pixel(1) >= 240) out_pixel(1) = 239;
+        if (out_pixel(1) >= 240) 
+            out_pixel(1) = 239;
         end
-        if (out_pixel(2) <= 0) out_pixel(2) = 1;
+        if (out_pixel(2) <= 0) 
+            out_pixel(2) = 1;
         end
-        if (out_pixel(2) >= 320) out_pixel(2) = 319;
+        if (out_pixel(2) >= 320) 
+            out_pixel(2) = 319;
         end
         
         out_image(x, y) = uint8(image(out_pixel(2), out_pixel(1)));
@@ -27,7 +37,7 @@ for x = 1:64
 end
 
 imageDestinationName = fullfile('tmp_faces',imageName);
-imwrite(out_image, imageDestinationName);
+imwrite(mat2gray(out_image'), imageDestinationName);
 
 end
 

@@ -1,4 +1,4 @@
-function [ featuresVector ] = ReadFiles( dirPath )
+function [ ] = ReadFiles( dirPath )
 %Read every feature file and put data in the vector
 %   Detailed explanation goes here
 files = dir(dirPath);
@@ -7,17 +7,18 @@ FileName = {};
 
 i =  1;
 
+%locations of features (eyes, tip of nose, tips of mouth) 
 Fpredetermined = [13 20;
     50 20;
     34 34;
     16 50;
-    48 50;];
+    48 50;]';
 
 
-%get all image names
+%get names of all image and store them in FileName array
 for x = 1:length(files)
     file = files(x).name;
-    if length(findstr('txt', file)) > 0
+    if isempty(strfind(file, 'txt')) == 0
         FileName{i} = char(files(x).name);
         i = i + 1;
     end
@@ -40,13 +41,14 @@ while (doIteration == true)
         tmpTxtFile = fullfile('features_data',tmpFile);
         data = importdata(tmpTxtFile);
         
-        Fi = [data(1) data(6) 1; data(2) data(7) 1; data(3) data(8) 1; data(4) data(9) 1; data(5) data(10) 1];
+        Fi = [data(1) data(6) 1; data(2) data(7) 1; data(3) data(8) 1; data(4) data(9) 1; data(5) data(10) 1]';
         
         %Ab - trasformation that aligns features of image Fi with Fpredetermined
-        Ab = pinv(Fi) * Favg;
+        Ab =  Favg * pinv(Fi);
         
         %Fip - transformation of image Fi
-        Fip = Fi * Ab;
+        Fip = Ab * Fi;
+        
         
         imgFile = strrep(tmpFile, '.txt', '.jpg'); 
         ImageResize(imgFile, Ab);
@@ -60,14 +62,14 @@ while (doIteration == true)
     
     %find difference between current and previous average, if its small
     %stop
-    diff = abs((FAvgTmp / length(FileName)) - Favg);
+    diff = abs((FAvgTmp / length(FileName)) - Favg)
     maxDiff = max(diff(:));
     
     if maxDiff < 0.8
         doIteration = false;
     end
     
-    Favg = FAvgTmp / length(FileName);
+    Favg = FAvgTmp / length(FileName)
     j = j+1;
 end
 
