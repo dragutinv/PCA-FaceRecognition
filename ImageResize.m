@@ -36,7 +36,14 @@ for x = 1:64
     end
 end
 
-imageDestinationName = fullfile('tmp_faces',imageName);
+if isempty(strfind(imageName, '4')) == 0 || isempty(strfind(imageName, '5')) == 0
+    %put image in training set
+    imageDestinationName = fullfile('test_images',imageName);
+else
+    %put image in test set
+    imageDestinationName = fullfile('train_images',imageName);
+end
+
 imwrite(mat2gray(out_image'), imageDestinationName);
 
 end

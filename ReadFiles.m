@@ -62,14 +62,14 @@ while (doIteration == true)
     
     %find difference between current and previous average, if its small
     %stop
-    diff = abs((FAvgTmp / length(FileName)) - Favg)
+    diff = abs((FAvgTmp / length(FileName)) - Favg);
     maxDiff = max(diff(:));
     
     if maxDiff < 0.8
         doIteration = false;
     end
     
-    Favg = FAvgTmp / length(FileName)
+    Favg = FAvgTmp / length(FileName);
     j = j+1;
 end
 
