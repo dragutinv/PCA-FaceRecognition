@@ -1,7 +1,7 @@
-function [ ] = ReadFiles( dirPath )
+function [ ] = NormalizeImages( features_dir, faces_dir, test_dir, train_dir, doOptimisation )
 %Read every feature file and put data in the vector
-%   Detailed explanation goes here
-files = dir(dirPath);
+
+files = dir(features_dir);
 
 FileName = {};
 
@@ -38,7 +38,7 @@ while (doIteration == true)
     
     for i =  1:length(FileName)
         tmpFile = FileName{i};
-        tmpTxtFile = fullfile('features_data',tmpFile);
+        tmpTxtFile = fullfile(features_dir,tmpFile);
         data = importdata(tmpTxtFile);
         
         Fi = [data(1) data(6) 1; data(2) data(7) 1; data(3) data(8) 1; data(4) data(9) 1; data(5) data(10) 1]';
@@ -51,7 +51,7 @@ while (doIteration == true)
         
         
         imgFile = strrep(tmpFile, '.txt', '.jpg'); 
-        ImageResize(imgFile, Ab);
+        ImageResize(faces_dir, test_dir, train_dir, doOptimisation, imgFile, Ab);
         
         if (i == 1 && j == 0)
             Favg = Fip;
@@ -74,6 +74,5 @@ while (doIteration == true)
 end
 
 clear all;
-
 
 end
