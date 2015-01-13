@@ -24,16 +24,13 @@ ShowPictures(train_dir, test_dir);
 accuracies = [];
 sexAccuracies = [];
 checkNsimilarFacesSet = [];
-topEigenVectorsSet = [];
+topEigenVectors = 50;
 
 for checkNsimilarFaces = 1:5
-    for topEigenVectors = 45:50
         [PCA_database, transformationMatrix, EigenValues, accuracy, sexAccuracy] = EigenFaces(train_dir, test_dir, checkNsimilarFaces, topEigenVectors, doOptimisation);
         accuracies = [accuracies accuracy];
         sexAccuracies = [sexAccuracies sexAccuracy];
         checkNsimilarFacesSet = [checkNsimilarFacesSet checkNsimilarFaces];
-        topEigenVectorsSet = [topEigenVectorsSet topEigenVectors];
-    end
 end
 
 ShowEigenValues(EigenValues);
@@ -41,20 +38,21 @@ ShowEigenFaces(PCA_database, transformationMatrix);
 
 %show relation between number of eigen vectors, number of similar faces and face recognition accuracy
 figure('units','normalized','outerposition',[0 0 1 1], 'Name','Accuracy of face recognition');
-mesh(checkNsimilarFacesSet, topEigenVectorsSet, accuracies);
-
-title('Relation between number of eigen faces, similar faces and accuracy')
-xlabel('Number of similar faces');
-ylabel('Number of Eigen vectors');
-zlabel('Accuracy');
+scatter(checkNsimilarFacesSet, accuracies);
+title('Relation between number of similar faces and accuracy')
+xlabel('Nuber of smilar faces');
+ylabel('Accuracy');
+set(gca,'xtick',0:5);
+grid on;
 
 %show relation between number of eigen vectors and sex accuracy
 figure('units','normalized','outerposition',[0 0 1 1], 'Name','Accuracy of sex recognition');
-scatter(topEigenVectorsSet, accuracies);
+bar(topEigenVectors, sexAccuracies(1));
 
-title('Relation between number of eigen faces and sex recognition accuracy')
+title('Accuracy of sex recognition');
 xlabel('Number of Eigen vectors');
 ylabel('Accuracy');
+grid on;
 
 clear all;
 

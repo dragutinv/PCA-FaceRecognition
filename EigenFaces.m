@@ -118,7 +118,7 @@ for i = 1:length(female)
 end
 
 PCA_female = PCA_database(femaleIndexes, :);
-PCA_male = PCA_database(setdiff([1:size(PCA_database, 1)], femaleIndexes), :);
+PCA_male = PCA_database(setdiff(1:size(PCA_database, 1), femaleIndexes), :);
 
 totalErrors = 0;
 
