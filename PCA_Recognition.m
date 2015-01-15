@@ -11,8 +11,8 @@ close all;
 
 features_dir = 'features_data';
 faces_dir = 'faces_data';
-test_dir = 'test_images';
 train_dir = 'train_images';
+test_dir = 'test_images';
 
 if doNormalization == true
     %normalize images - adjust location of features of each image 
@@ -22,19 +22,21 @@ end
 ShowPictures(train_dir, test_dir);
 
 accuracies = [];
-sexAccuracies = [];
 checkNsimilarFacesSet = [];
-topEigenVectors = 50;
+useTopEigenVectors = 50;
+
+[PCA_database, Labels, TopEigenVectors, EigenValues, AvgFace] = EigenFaces(train_dir, useTopEigenVectors, doOptimisation);
+
+% GET GLOBAL STATISTICS FOR FACE RECOGNITION
 
 for checkNsimilarFaces = 1:5
-        [PCA_database, transformationMatrix, EigenValues, accuracy, sexAccuracy] = EigenFaces(train_dir, test_dir, checkNsimilarFaces, topEigenVectors, doOptimisation);
+        accuracy = AccuracyFaceRecognition(test_dir, PCA_database, Labels, TopEigenVectors, AvgFace, checkNsimilarFaces, doOptimisation);
         accuracies = [accuracies accuracy];
-        sexAccuracies = [sexAccuracies sexAccuracy];
         checkNsimilarFacesSet = [checkNsimilarFacesSet checkNsimilarFaces];
 end
 
 ShowEigenValues(EigenValues);
-ShowEigenFaces(PCA_database, transformationMatrix);
+ShowEigenFaces(PCA_database, TopEigenVectors);
 
 %show relation between number of eigen vectors, number of similar faces and face recognition accuracy
 figure('units','normalized','outerposition',[0 0 1 1], 'Name','Accuracy of face recognition');
@@ -45,9 +47,13 @@ ylabel('Accuracy');
 set(gca,'xtick',0:5);
 grid on;
 
+% GET GLOBAL STATISTICS FOR SEX RECOGNITION
+
+sexAccuracy = AccuracySexRecognition(test_dir, PCA_database, Labels, TopEigenVectors, AvgFace, doOptimisation);
+
 %show relation between number of eigen vectors and sex accuracy
 figure('units','normalized','outerposition',[0 0 1 1], 'Name','Accuracy of sex recognition');
-bar(topEigenVectors, sexAccuracies(1));
+bar(useTopEigenVectors, sexAccuracy);
 
 title('Accuracy of sex recognition');
 xlabel('Number of Eigen vectors');
