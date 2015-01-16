@@ -6,8 +6,8 @@ function [ eigen_vectors, eigen_values] = Eigen( A )
 identityMatrix = eye(size(A, 1));
 
 syms Lambda;
-LambdaS = solve(det(A - Lambda*identityMatrix) == 0,  Lambda);
-LambdaS = sort(LambdaS);
+LambdaS = null(det(A - Lambda*identityMatrix));
+LambdaS = sort(LambdaS,'descend');
 
 eigen_vectors = zeros(size(LambdaS, 1));
 eigen_values = eye(size(LambdaS, 1));
